@@ -107,7 +107,7 @@ var config = {
 
     // Start the conference in audio only mode (no video is being received nor
     // sent).
-    // startAudioOnly: false,
+    startAudioOnly: true,
 
     // Every participant after the Nth will start audio muted.
     // startAudioMuted: 10,
@@ -133,7 +133,7 @@ var config = {
     // Video
 
     // Sets the preferred resolution (height) for local video. Defaults to 720.
-    // resolution: 720,
+    resolution: 480,
 
     // How many participants while in the tile view mode, before the receiving video quality is reduced from HD to SD.
     // Use -1 to disable.
@@ -144,15 +144,15 @@ var config = {
     // util#browser#usesNewGumFlow. The constraints are independent from
     // this config's resolution value. Defaults to requesting an ideal
     // resolution of 720p.
-    // constraints: {
-    //     video: {
-    //         height: {
-    //             ideal: 720,
-    //             max: 720,
-    //             min: 240
-    //         }
-    //     }
-    // },
+    constraints: {
+        video: {
+            height: {
+                ideal: 480,
+                max: 480,
+                min: 240
+            }
+        }
+    },
 
     // Enable / disable simulcast support.
     // disableSimulcast: false,
@@ -160,14 +160,14 @@ var config = {
     // Enable / disable layer suspension.  If enabled, endpoints whose HD
     // layers are not in use will be suspended (no longer sent) until they
     // are requested again.
-    // enableLayerSuspension: false,
+    enableLayerSuspension: false,
 
     // Every participant after the Nth will start video muted.
     // startVideoMuted: 10,
 
     // Start calls with video muted. Unlike the option above, this one is only
     // applied locally. FIXME: having these 2 options is confusing.
-    // startWithVideoMuted: false,
+    startWithVideoMuted: true,
 
     // If set to true, prefer to use the H.264 video codec (if supported).
     // Note that it's not recommended to do this because simulcast is not
@@ -183,10 +183,10 @@ var config = {
     // Desktop sharing
 
     // Optional desktop sharing frame rate options. Default value: min:5, max:5.
-    // desktopSharingFrameRate: {
-    //     min: 5,
-    //     max: 5
-    // },
+    desktopSharingFrameRate: {
+        min: 2,
+        max: 5
+    },
 
     // Try to start calls with screen-sharing instead of camera video.
     // startScreenSharing: false,
@@ -215,19 +215,19 @@ var config = {
     // fileRecordingsServiceSharingEnabled: false,
 
     // Whether to enable live streaming or not.
-    // liveStreamingEnabled: false,
+    liveStreamingEnabled: false,
 
     // Transcription (in interface_config,
     // subtitles and buttons can be configured)
-    // transcribingEnabled: false,
+    transcribingEnabled: false,
 
     // Enables automatic turning on captions when recording is started
-    // autoCaptionOnRecord: false,
+    autoCaptionOnRecord: false,
 
     // Misc
 
     // Default value for the channel "last N" attribute. -1 for unlimited.
-    channelLastN: -1,
+    channelLastN: 8,
 
     // Provides a way for the lastN value to be controlled through the UI.
     // When startLastN is present, conference starts with a last-n value of startLastN and channelLastN

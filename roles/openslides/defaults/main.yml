@@ -1,0 +1,22 @@
+openslides_subdomain: "openslides"
+openslides_domain: "{{ openslides_subdomain }}.{{ domain }}"
+
+openslides_dir: "/opt/openslides"
+openslides_repo_url: 'https://github.com/OpenSlides/OpenSlides.git'
+openslides_repo_branch: 'stable/3.4.x'
+openslides_django_password: "{{ lookup('password', secret + '/' + 'openslides_django_user_password length=32') }}"
+openslides_admin_password: "{{ lookup('password', secret + '/' + 'openslides_admin_password length=32') }}"
+
+openslides_email_backend: 'django.core.mail.backends.smtp.EmailBackend'
+openslides_email_password: TODO
+openslides_email_user: TODO
+openslides_email_host: w011bf99.kasserver.com
+  #smtp.googlemail.com
+openslides_email_port: 567
+openslides_domain: "{{ openslides_subdomain }}.{{ domain }}"
+jitsi_domain: "{{ jitsi_subdomain }}.{{ domain }}"
+openslides_room: JHV2023
+openslides_room_pw: "{{ lookup('password', secret + '/' + 'openslides_jitsi_room_password length=32') }}"
+
+openslides_http_port: 8000
+openslides_https_port: 8001

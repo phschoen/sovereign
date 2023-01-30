@@ -1,27 +1,23 @@
 #!/bin/bash
 
 # Build list of domains and subdomains we need a certificate for
-d=""
+service apache2 stop
+
 for domain in {{ virtual_domains | json_query('[*].name') | join(' ') }}; do
+{% if letsencrypt_for_domain %}
   # domain itself - foo.com
   # only add if the DNS entry for the domain does actually exist
-  if (getent hosts $domain > /dev/null); then
-    if [ -z "$d" ]; then
-      d="$domain";
-    else
-      d="$d,$domain";
-    fi
+
+  if (getent hosts $domain > /dev/null)  ; then
+    certbot certonly --standalone -c /etc/letsencrypt/cli.conf -d $domain
   fi
+{% endif %}
 
   # subdomains - www.foo.com mail.foo.com ...
   for sub in {{ subdomains | join(' ') }}; do
     # only add if the DNS entry for the subdomain does actually exist
     if (getent hosts $sub.$domain > /dev/null); then
-      if [ -z "$d" ]; then
-        d="$sub.$domain";
-      else
-        d="$d,$sub.$domain";
-      fi
+        certbot certonly --standalone -c /etc/letsencrypt/cli.conf -d $sub.$domain
     fi
   done
 done
@@ -29,6 +25,4 @@ done
 # We are using the "standalone" letsencrypt plugin, which runs its own
 # webserver, so we need to temporarily free up the HTTP(S) ports by stopping
 # our own Apache.
-service apache2 stop
-certbot certonly --standalone -c /etc/letsencrypt/cli.conf --domains $d
 service apache2 start

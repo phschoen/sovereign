@@ -1,0 +1,64 @@
+#! /bin/sh
+#
+# INIT script for Jitsi Videobridge
+# Version: 1.0  01-May-2014  yasen@bluejimp.com
+#
+### BEGIN INIT INFO
+# Provides:          jitsi-videobridge
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Jitsi Videobridge
+# Description:       WebRTC compatible Selective Forwarding Unit (SFU)
+### END INIT INFO
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+stop() {
+	cd {{ openslides_dir }}/docker
+	docker-compose down
+}
+
+start() {
+    cd {{ openslides_dir }}/docker
+    docker-compose down
+}
+
+reload() {
+    echo 'Not yet implemented.'
+}
+
+status() {
+    cd {{ openslides_dir }}/docker
+    docker-compose log
+
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    stop
+    start
+    ;;
+  reload)
+    reload
+    ;;
+  force-reload)
+    reload
+    ;;
+  status)
+    status
+    ;;
+  *)
+    N=/etc/init.d/$NAME
+    echo "Usage: $N {start|stop|restart|reload|status}" >&2
+    exit 1
+    ;;
+esac
+
+exit 0

@@ -1,0 +1,37 @@
+---
+################################################################################
+# Set your variables here.
+################################################################################
+
+secret_root: '{{ inventory_dir | realpath }}'
+secret_name: 'secret'
+secret: '{{ secret_root + "/" + secret_name }}'
+
+domain: phschoen.de
+server_name: openslides
+server_fqdn: "{{ server_name }}.{{ domain }}"
+jitsi_subdomain: osjit
+
+letsencrypt_for_domain: False
+virtual_domains:
+  - name: "{{ domain }}"
+    doc_root: "/var/www/{{ domain }}"
+
+subdomains:
+  - openslides
+  - osjit
+
+
+main_user_name: phschoen
+main_user_shell: "/usr/bin/zsh"
+admin_email: "{{ main_user_name }}@{{ domain }}"
+
+common_timezone: 'Etc/UTC'
+
+# use servers tailored to the server location
+# See http://www.pool.ntp.org/en/use.html
+#ntp_servers:
+#  - 0.de.pool.ntp.org
+#  - 1.de.pool.ntp.org
+#  - 2.de.pool.ntp.org
+#  - 3.de.pool.ntp.org

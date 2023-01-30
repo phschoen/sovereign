@@ -37,7 +37,7 @@
   debconf:
     name: jitsi-meet
     question: jitsi-meet/cert-path-key
-    value: "/etc/letsencrypt/live/{{ domain }}/privkey.pem"
+    value: "/etc/letsencrypt/live/{{ jitsi_domain }}/privkey.pem"
     vtype: string
   tags:
     - dependencies
@@ -46,7 +46,7 @@
   debconf:
     name: jitsi-meet
     question: jitsi-meet/cert-path-crt
-    value: "/etc/letsencrypt/live/{{ domain }}/fullchain.pem"
+    value: "/etc/letsencrypt/live/{{ jitsi_domain }}/fullchain.pem"
     vtype: string
   tags:
     - dependencies

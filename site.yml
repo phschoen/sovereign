@@ -1,7 +1,7 @@
 ---
 # This is the top-level playbook that defines our entire infrastructure.
 
-- hosts: all
+- hosts: toolbox
   user: deploy
   become: True
   gather_facts: True
@@ -10,13 +10,8 @@
   roles:
     - common
     - sslletsencrypt
-    - blog
-    - mailserver
-    - webmail
-    - gitea
-    - vpn
-    - backup
-    - monitoring # Monitoring role should be last. See roles/monitoring/README.md
+    - jitsi
+    - openslides
 
   # These are all roles in one
   #roles:

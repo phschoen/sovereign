@@ -1,0 +1,141 @@
+---
+- name: Ensure docker is installed
+  tags:
+    - dependencies
+  block:
+    - name: install docker req
+      apt:
+        name: "{{ packages }}"
+        state: latest
+        update_cache: true
+      vars:
+        packages:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - python3-setuptools
+          - virtualenv
+
+    - name: add docker gpg key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: add docker ce repo
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: add docker ce software
+      apt:
+        name:
+          - docker-ce
+          - docker-compose
+        state: latest
+        update_cache: true
+
+    - name: add docker module for python
+      pip:
+        name: docker
+
+- name: check out openslides
+  ansible.builtin.git:
+    repo: "{{ openslides_repo_url }}"
+    version: "{{ openslides_repo_branch }}"
+    dest: "{{ openslides_dir }}"
+
+- name: setup docker image for openslides (takes long)
+  ansible.builtin.shell:
+    chdir: "{{ openslides_dir }}/docker"
+    cmd: "./build.sh all"
+
+- name: django env
+  copy:
+    src: '{{ openslides_dir }}/docker/secrets/django.env.example'
+    dest: '{{ openslides_dir }}/docker/secrets/django.env'
+    remote_src: true
+    force: no
+
+- name: setup django secret
+  lineinfile:
+    name: '{{ openslides_dir }}/docker/secrets/django.env'
+    regexp: '^DJANGO_SECRET_KEY='
+    line: "DJANGO_SECRET_KEY='{{ openslides_django_password }}'"
+    state: present
+
+- name: admin env
+  copy:
+    src: '{{ openslides_dir }}/docker/secrets/adminsecret.env.example'
+    dest: '{{ openslides_dir }}/docker/secrets/adminsecret.env'
+    remote_src: true
+    force: no
+
+- name: setup admind secret
+  lineinfile:
+    name: '{{ openslides_dir }}/docker/secrets/adminsecret.env'
+    regexp: '^([# ]*)OPENSLIDES_ADMIN_PASSWORD'
+    line: "OPENSLIDES_ADMIN_PASSWORD='{{ openslides_admin_password }}'"
+    state: present
+
+- name: generate config file
+  ansible.builtin.shell:
+    chdir: "{{ openslides_dir }}/docker"
+    cmd: "m4 docker-compose.yml.m4 > docker-compose.yml"
+  environment:
+    EMAIL_BACKEND: "{{ openslides_email_backend }}"
+    EMAIL_HOST: "{{ openslides_email_host }}"
+    EMAIL_HOST_PASSWORD: "{{ openslides_email_password }}"
+    EMAIL_HOST_USER: "{{ openslides_email_password }}"
+    EMAIL_PORT: "{{ openslides_email_port }}"
+    EMAIL_USE_SSL: "False"
+    EMAIL_USE_TLS: "True"
+    ENABLE_ELECTRONIC_VOTING: "True"
+    ENABLE_CHAT: "True"
+    INSTANCE_DOMAIN: "{{ openslides_domain }}"
+    JITSI_DOMAIN: "{{ openslides_domain }}"
+    JITSI_ROOM_PASSWORD: "{{ openslides_room_pw }}"
+    JITSI_ROOM_NAME: "{{ openslides_room }}"
+    EXTERNAL_HTTP_PORT: "{{ openslides_http_port }}"
+    EXTERNAL_HTTPS_PORT: "{{ openslides_https_port }}"
+
+
+- name: copy certs from lets encrypt
+  copy:
+    src: /etc/letsencrypt/live/openslides.phschoen.de/cert.pem
+    dest: "{{ openslides_dir }}/caddy/certs/cert.pem "
+    remote_src: true
+
+- name: copy certs from lets encrypt
+  copy:
+    src: /etc/letsencrypt/live/openslides.phschoen.de/privkey.pem
+    dest: "{{ openslides_dir }}/caddy/certs/key.pem "
+    remote_src: true
+
+- name: Create the Apache openslies sites config files
+  template:
+    src=etc_init.d_openslides.j2
+    dest=/etc/init.d/openslides
+    owner=root
+    group=root
+    mode=766
+
+- name: Register new openslides service
+  systemd: name=openslides daemon_reload=yes enabled=yes
+
+- name: Start new openslides instance
+  service: name=openslides state=started
+
+- name: Create the Apache openslies sites config files
+  template:
+    src=etc_apache2_sites-available_openslides.j2
+    dest=/etc/apache2/sites-available/openslides_{{ item.name }}.conf
+    owner=root
+    group=root
+  with_items: "{{ virtual_domains }}"
+
+- name: Enable Apache sites (creates new sites-enabled symlinks)
+  command: a2ensite openslides_{{ item }}.conf creates=/etc/apache2/sites-enabled/openslides_{{ item }}.conf
+  notify: restart apache
+  with_items: "{{ virtual_domains | json_query('[*].name') }}"

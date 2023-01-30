@@ -1,0 +1,23 @@
+<VirtualHost *:80>
+    ServerName {{ openslides_subdomain }}.{{ item.name }}
+
+    Redirect temp / https://{{ openslides_subdomain }}.{{ item.name }}/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{ openslides_subdomain }}.{{ item.name }}
+
+    SSLEngine               On
+    DocumentRoot            "{{ item.doc_root }}"
+    DirectoryIndex          index.html
+    Options                 -Indexes
+    HostnameLookups         Off
+    LogLevel                warn
+    ErrorLog                /var/log/apache2/openslides.info-error_log
+    CustomLog               /var/log/apache2/openslides.info-access_log common
+
+    ProxyRequests           Off
+    ProxyPreserveHost       On
+    ProxyPass               / https://localhost:{{ openslides_https_port }}/
+    ProxyPassReverse        / https://localhost:{{ openslides_https_port }}/
+</VirtualHost>

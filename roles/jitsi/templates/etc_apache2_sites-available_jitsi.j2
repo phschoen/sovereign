@@ -12,6 +12,9 @@
 
     SSLEngine               On
     SSLProxyEngine          On
+    
+    SSLCertificateKeyFile /etc/letsencrypt/live/{{ jitsi_domain }}/privkey.pem
+    SSLCertificateFile    /etc/letsencrypt/live/{{ jitsi_domain }}/fullchain.pem
 
     Header always set Strict-Transport-Security "max-age=63072000"
 
