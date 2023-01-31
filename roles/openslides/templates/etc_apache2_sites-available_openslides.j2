@@ -7,7 +7,6 @@
 <VirtualHost *:443>
     ServerName {{ openslides_subdomain }}.{{ item.name }}
 
-    SSLEngine               On
     DocumentRoot            "{{ item.doc_root }}"
     DirectoryIndex          index.html
     Options                 -Indexes
@@ -16,6 +15,9 @@
     ErrorLog                /var/log/apache2/openslides.info-error_log
     CustomLog               /var/log/apache2/openslides.info-access_log common
 
+    SSLProxyEngine On    
+    SSLProxyCheckPeerCN on
+    SSLProxyCheckPeerExpire on
     ProxyRequests           Off
     ProxyPreserveHost       On
     ProxyPass               / https://localhost:{{ openslides_https_port }}/

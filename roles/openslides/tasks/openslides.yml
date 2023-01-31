@@ -93,24 +93,26 @@
     EMAIL_USE_TLS: "True"
     ENABLE_ELECTRONIC_VOTING: "True"
     ENABLE_CHAT: "True"
+    #INSTANCE_DOMAIN: "127.0.0.1" 
     INSTANCE_DOMAIN: "{{ openslides_domain }}"
-    JITSI_DOMAIN: "{{ openslides_domain }}"
+    JITSI_DOMAIN: "{{ jitsi_domain }}"
     JITSI_ROOM_PASSWORD: "{{ openslides_room_pw }}"
     JITSI_ROOM_NAME: "{{ openslides_room }}"
     EXTERNAL_HTTP_PORT: "{{ openslides_http_port }}"
     EXTERNAL_HTTPS_PORT: "{{ openslides_https_port }}"
+    INSTANCE_URL_SCHEME: "http"
 
 
 - name: copy certs from lets encrypt
   copy:
     src: /etc/letsencrypt/live/openslides.phschoen.de/cert.pem
-    dest: "{{ openslides_dir }}/caddy/certs/cert.pem "
+    dest: "{{ openslides_dir }}/caddy/certs/cert.pem"
     remote_src: true
 
 - name: copy certs from lets encrypt
   copy:
     src: /etc/letsencrypt/live/openslides.phschoen.de/privkey.pem
-    dest: "{{ openslides_dir }}/caddy/certs/key.pem "
+    dest: "{{ openslides_dir }}/caddy/certs/key.pem"
     remote_src: true
 
 - name: Create the Apache openslies sites config files
