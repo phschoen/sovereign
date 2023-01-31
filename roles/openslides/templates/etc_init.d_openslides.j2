@@ -21,7 +21,7 @@ stop() {
 
 start() {
     cd {{ openslides_dir }}/docker
-    docker-compose down
+    docker-compose up -d
 }
 
 reload() {
