@@ -7,10 +7,10 @@ secret_root: '{{ inventory_dir | realpath }}'
 secret_name: 'secret'
 secret: '{{ secret_root + "/" + secret_name }}'
 
-domain: phschoen.de
-server_name: openslides
+domain: toolbox-bodensee.de
+server_name: meet
 server_fqdn: "{{ server_name }}.{{ domain }}"
-jitsi_subdomain: osjit
+jitsi_subdomain: talk
 
 letsencrypt_for_domain: False
 virtual_domains:
@@ -18,12 +18,12 @@ virtual_domains:
     doc_root: "/var/www/{{ domain }}"
 
 subdomains:
-  - openslides
-  - osjit
+  - meet
+  - talk
 
 
-main_user_name: phschoen
-main_user_shell: "/usr/bin/zsh"
+main_user_name: ubuntu
+main_user_shell: "/bin/bash"
 admin_email: "{{ main_user_name }}@{{ domain }}"
 
 common_timezone: 'Etc/UTC'

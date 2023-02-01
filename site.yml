@@ -2,7 +2,7 @@
 # This is the top-level playbook that defines our entire infrastructure.
 
 - hosts: toolbox
-  user: deploy
+  user: ubuntu
   become: True
   gather_facts: True
 

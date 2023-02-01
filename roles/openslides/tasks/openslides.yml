@@ -46,11 +46,6 @@
     version: "{{ openslides_repo_branch }}"
     dest: "{{ openslides_dir }}"
 
-- name: setup docker image for openslides (takes long)
-  ansible.builtin.shell:
-    chdir: "{{ openslides_dir }}/docker"
-    cmd: "./build.sh all"
-
 - name: django env
   copy:
     src: '{{ openslides_dir }}/docker/secrets/django.env.example'
@@ -88,8 +83,8 @@
     EMAIL_HOST: "{{ openslides_email_host }}"
     EMAIL_HOST_PASSWORD: "{{ openslides_email_password }}"
     EMAIL_HOST_USER: "{{ openslides_email_user }}"
-    EMAIL_PORT: "587"
     DEFAULT_FROM_EMAIL: "{{ openslides_email_sender }}"
+    EMAIL_PORT: "{{ openslides_email_port }}"
     EMAIL_USE_SSL: "False"
     EMAIL_USE_TLS: "True"
     ENABLE_ELECTRONIC_VOTING: "True"
@@ -102,18 +97,22 @@
     EXTERNAL_HTTPS_PORT: "{{ openslides_https_port }}"
     INSTANCE_URL_SCHEME: "http"
 
-
 - name: copy certs from lets encrypt
   copy:
-    src: /etc/letsencrypt/live/openslides.phschoen.de/cert.pem
+    src: /etc/letsencrypt/live/{{openslides_domain }}/cert.pem
     dest: "{{ openslides_dir }}/caddy/certs/cert.pem"
     remote_src: true
 
 - name: copy certs from lets encrypt
   copy:
-    src: /etc/letsencrypt/live/openslides.phschoen.de/privkey.pem
+    src: /etc/letsencrypt/live/{{ openslides_domain }}/privkey.pem
     dest: "{{ openslides_dir }}/caddy/certs/key.pem"
     remote_src: true
+
+- name: setup docker image for openslides (takes long)
+  ansible.builtin.shell:
+    chdir: "{{ openslides_dir }}/docker"
+    cmd: "./build.sh all"
 
 - name: Create the Apache openslies sites config files
   template:

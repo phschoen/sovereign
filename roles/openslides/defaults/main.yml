@@ -1,4 +1,4 @@
-openslides_subdomain: "openslides"
+openslides_subdomain: "meet"
 openslides_domain: "{{ openslides_subdomain }}.{{ domain }}"
 
 openslides_dir: "/opt/openslides"
@@ -7,13 +7,13 @@ openslides_repo_branch: 'stable/3.4.x'
 openslides_django_password: "{{ lookup('password', secret + '/' + 'openslides_django_user_password length=32') }}"
 openslides_admin_password: "{{ lookup('password', secret + '/' + 'openslides_admin_password length=32') }}"
 
-openslides_email_user: philipp.schoenberger@toolbox-bodensee.de
-openslides_email_password: todo
-openslides_email_sender: philipp.schoenberger@toolbox-bodensee.de
+openslides_email_backend: 'django.core.mail.backends.smtp.EmailBackend'
+openslides_email_password: <CHANGEME>
+openslides_email_user: <CHENGEME>
+openslides_email_sender: meet@toolbox-bodensee.de
 openslides_email_host: w011bf99.kasserver.com
   #smtp.googlemail.com
-openslides_email_port: 993
-openslides_domain: "{{ openslides_subdomain }}.{{ domain }}"
+openslides_email_port: 587
 jitsi_domain: "{{ jitsi_subdomain }}.{{ domain }}"
 openslides_room: JHV2023
 openslides_room_pw: "{{ lookup('password', secret + '/' + 'openslides_jitsi_room_password length=32') }}"
